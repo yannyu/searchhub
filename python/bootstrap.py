@@ -14,7 +14,6 @@ from os import listdir
 from os.path import isfile, join
 
 from server import backend
-from server.backends.fusion import new_admin_session
 
 # Use the Solr Config API to bootstrap search_components and request handlers
 def setup_request_handlers(backend, collection_id):
@@ -48,6 +47,7 @@ def setup_commit_times(backend, collection_id, time_in_ms=10*60*1000):
 def setup_find_fields(backend, collection_id):
   backend.add_field(collection_id, "publishedOnDate", type="tdate", required=True)
   backend.add_field(collection_id, "suggest", type="suggesterFT", multivalued=True)
+  backend.add_field(collection_id, "all_suggest", type="suggesterFT", multivalued=True)
   backend.add_field(collection_id, "content", type="text_en")
   backend.add_field(collection_id, "project", type="string", copyDests=["suggest"])
   backend.add_field(collection_id, "project_label", type="string", copyDests=["suggest"])
@@ -280,9 +280,10 @@ if cmd_args.run_youtube:
 
 # Create the collection, setup fields and other solr pieces
 if cmd_args.create_collections or create_all:
-  session = new_admin_session()
   # Create the "lucidfind" collection
-  solr_params = {"replicationFactor":2,"numShards":1}
+  num_shards = app.config.get("FUSION_COLLECTION_NUM_SHARDS", "1")
+  num_replicas = app.config.get("FUSION_COLLECTION_NUM_REPLICAS", "2")
+  solr_params = {"replicationFactor":int(num_replicas),"numShards":int(num_shards)}
   status = backend.create_collection(lucidfind_collection_id, enable_signals=True, solr_params=solr_params, default_commit_within=60*10*1000)
   if status == False:
     exit(1)
