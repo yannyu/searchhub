@@ -144,11 +144,12 @@ class FusionBackend(Backend):
     YOUTUBE_API_SERVICE_NAME = app.config.get("YOUTUBE_API_SERVICE_NAME")
     YOUTUBE_API_VERSION = app.config.get("YOUTUBE_API_VERSION")
 
-    DEVELOPER_KEY = "AIzaSyD2vSZu7tNRPhJHScqBJ0h8pjLK7xko-e8"
+    DEVELOPER_KEY = "AIzaSyDhPDWg8ghMoJHordyypdIRQHmQEoDsxso"
     YOUTUBE_API_SERVICE_NAME = "youtube"
     YOUTUBE_API_VERSION = "v3"
 
-    youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=DEVELOPER_KEY)
+    youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
+                    developerKey=DEVELOPER_KEY)
 
     print ("finished making youtube")
     search_response = youtube.search().list(
@@ -173,7 +174,6 @@ class FusionBackend(Backend):
     if resp.status_code != 204:
       print "Unable to set system metrics collection to {0}".format(enabled)
       print resp
-
 
   def set_log_level(self, log_level="WARN"):
     print "Setting Log Level to {0}".format(log_level)
